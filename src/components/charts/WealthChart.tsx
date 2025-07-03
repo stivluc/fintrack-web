@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, Typography, Box, useTheme, Button, ButtonGroup } from '@mui/material';
 
@@ -19,23 +19,28 @@ const generateDummyData = (filter: TimeFilter): WealthData[] => {
   let dataPoints: WealthData[] = [];
   
   const getInitialWealth = (filter: TimeFilter) => {
+    // Start from current wealth (410k) and work backwards
+    const currentWealth = 410000;
     switch (filter) {
-      case '1M': return 52000;
-      case '6M': return 48000;
-      case '1Y': return 40000;
-      case 'YTD': return 45000;
-      case 'MAX': return 15000;
-      default: return 45000;
+      case '1M': return currentWealth - 2000; // Small variation over 1 month
+      case '6M': return currentWealth - 15000; // Moderate growth over 6 months
+      case '1Y': return currentWealth - 35000; // Good growth over 1 year
+      case 'YTD': return currentWealth - 25000; // YTD growth
+      case 'MAX': return currentWealth - 200000; // Long-term wealth building
+      default: return currentWealth - 35000;
     }
   };
   
   let baseWealth = getInitialWealth(filter);
   
-  // Growth trend factor - ensures long-term growth
+  // Growth trend factor - ensures we reach current wealth (410k)
   const getGrowthTrend = (index: number, totalPoints: number, filter: TimeFilter) => {
     const progress = index / totalPoints;
-    const baseGrowth = filter === 'MAX' ? 800 : filter === '1Y' ? 300 : 150;
-    return baseGrowth * progress * (1 + Math.random() * 0.3);
+    const currentWealth = 410000;
+    const initialWealth = getInitialWealth(filter);
+    const totalGrowth = currentWealth - initialWealth;
+    // Linear growth with some randomness
+    return (totalGrowth * progress) / totalPoints;
   };
   
   switch (filter) {
@@ -260,11 +265,17 @@ const generateDummyData = (filter: TimeFilter): WealthData[] => {
 const WealthChart: React.FC<WealthChartProps> = ({ data }) => {
   const theme = useTheme();
   const [selectedFilter, setSelectedFilter] = useState<TimeFilter>('1Y');
-  const [chartData, setChartData] = useState(generateDummyData('1Y'));
+  
+  // Always generate data based on selected filter for now
+  // TODO: Integrate with API to get filtered real data
+  const chartData = useMemo(() => {
+    return generateDummyData(selectedFilter);
+  }, [selectedFilter]);
   
   const handleFilterChange = (filter: TimeFilter) => {
     setSelectedFilter(filter);
-    setChartData(generateDummyData(filter));
+    // If no real data provided, generate dummy data for the filter
+    // Real data filtering should be handled by parent component or API
   };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -284,7 +295,12 @@ const WealthChart: React.FC<WealthChartProps> = ({ data }) => {
             {label}
           </Typography>
           <Typography variant="h6" sx={{ color: theme.palette.primary.main, fontWeight: 600 }}>
-            €{payload[0].value.toLocaleString()}
+            {new Intl.NumberFormat('fr-FR', {
+              style: 'currency',
+              currency: 'EUR',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }).format(payload[0].value)}
           </Typography>
         </Box>
       );
@@ -339,7 +355,12 @@ const WealthChart: React.FC<WealthChartProps> = ({ data }) => {
               <YAxis 
                 stroke={theme.palette.text.secondary}
                 fontSize={12}
-                tickFormatter={(value) => `€${value / 1000}k`}
+                tickFormatter={(value) => `€${(value / 1000).toFixed(0)}k`}
+                domain={selectedFilter === '1M' ? 
+                  [(dataMin: number) => Math.floor(dataMin * 0.999), (dataMax: number) => Math.ceil(dataMax * 1.001)] : 
+                  [(dataMin: number) => Math.floor(dataMin * 0.95), (dataMax: number) => Math.ceil(dataMax * 1.05)]
+                }
+                scale="linear"
               />
               <Tooltip content={<CustomTooltip />} />
               <Area

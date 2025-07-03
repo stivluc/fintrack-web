@@ -279,7 +279,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, variant = 'permanent' 
               mr: 2,
             }}
           >
-            {user?.firstName?.charAt(0) || 'U'}
+            {user?.first_name?.charAt(0) || 'U'}
           </Avatar>
           <Box sx={{ flex: 1 }}>
             <Typography 
@@ -290,7 +290,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, variant = 'permanent' 
                 fontSize: '0.9rem',
               }}
             >
-              {user?.firstName}
+              {user?.first_name}
             </Typography>
             <Typography 
               variant="caption" 

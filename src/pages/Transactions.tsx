@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -15,93 +15,54 @@ import {
   InputAdornment,
   useTheme,
   Grid,
+  Alert,
+  Pagination,
 } from '@mui/material';
 import { Search, TrendingUp, TrendingDown, DateRange } from '@mui/icons-material';
-
-interface Transaction {
-  id: string;
-  date: string;
-  description: string;
-  category: string;
-  amount: number;
-  type: 'income' | 'expense';
-}
+import { useQuery } from '@tanstack/react-query';
+import { TransactionsSkeleton } from '../components/common/LoadingSkeletons';
+import apiService, { Transaction } from '../services/api';
 
 const Transactions: React.FC = () => {
   const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [page, setPage] = useState(1);
+  
+  const pageSize = 20;
 
-  const transactions: Transaction[] = [
-    {
-      id: '1',
-      date: '2024-01-15',
-      description: 'Salaire',
-      category: 'Revenus',
-      amount: 4200,
-      type: 'income',
-    },
-    {
-      id: '2',
-      date: '2024-01-14',
-      description: 'Courses Carrefour',
-      category: 'Alimentation',
-      amount: -85.50,
-      type: 'expense',
-    },
-    {
-      id: '3',
-      date: '2024-01-13',
-      description: 'Essence',
-      category: 'Transport',
-      amount: -65.00,
-      type: 'expense',
-    },
-    {
-      id: '4',
-      date: '2024-01-12',
-      description: 'Loyer',
-      category: 'Logement',
-      amount: -1200,
-      type: 'expense',
-    },
-    {
-      id: '5',
-      date: '2024-01-11',
-      description: 'Netflix',
-      category: 'Loisirs',
-      amount: -12.99,
-      type: 'expense',
-    },
-  ];
+  // Build query parameters
+  const queryParams = useMemo(() => {
+    const params: any = {
+      page,
+      limit: pageSize,
+    };
+    
+    if (searchTerm) {
+      params.search = searchTerm;
+    }
+    
+    if (startDate) {
+      params.date_gte = startDate;
+    }
+    
+    if (endDate) {
+      params.date_lte = endDate;
+    }
+    
+    return params;
+  }, [searchTerm, startDate, endDate, page]);
 
-  const filteredTransactions = transactions.filter((transaction) => {
-    const matchesSearch = 
-      transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.category.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const transactionDate = new Date(transaction.date);
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-    
-    const matchesDateRange = 
-      (!start || transactionDate >= start) &&
-      (!end || transactionDate <= end);
-    
-    return matchesSearch && matchesDateRange;
+  const { data: transactionsData, isLoading, error } = useQuery({
+    queryKey: ['transactions', queryParams],
+    queryFn: () => apiService.getTransactions(queryParams),
+    placeholderData: (previousData) => previousData, // Keep previous data while loading new page
   });
 
-  const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
-      'Revenus': theme.palette.success.main,
-      'Alimentation': theme.palette.primary.main,
-      'Transport': theme.palette.secondary.main,
-      'Logement': theme.palette.warning.main,
-      'Loisirs': theme.palette.error.main,
-    };
-    return colors[category] || theme.palette.text.secondary;
-  };
+  const transactions = transactionsData?.results || [];
+  const totalCount = transactionsData?.count || 0;
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -111,10 +72,58 @@ const Transactions: React.FC = () => {
     });
   };
 
+  const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 2,
+    }).format(Math.abs(amount));
+  };
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setPage(1); // Reset to first page when searching
+  };
+
+  const handleDateChange = (field: 'start' | 'end', value: string) => {
+    if (field === 'start') {
+      setStartDate(value);
+    } else {
+      setEndDate(value);
+    }
+    setPage(1); // Reset to first page when filtering
+  };
+
+  if (isLoading) {
+    return <TransactionsSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <Box>
+        <Typography variant="h4" sx={{ mb: 4, fontWeight: 600 }}>
+          Transactions
+        </Typography>
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Erreur lors du chargement des transactions. Veuillez réessayer.
+        </Alert>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Typography variant="h4" sx={{ mb: 4, fontWeight: 600 }}>
         Transactions
+        {totalCount > 0 && (
+          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+            {totalCount} transaction{totalCount > 1 ? 's' : ''} au total
+          </Typography>
+        )}
       </Typography>
 
       <Card sx={{ mb: 3 }}>
@@ -126,7 +135,7 @@ const Transactions: React.FC = () => {
                 placeholder="Rechercher une transaction..."
                 variant="outlined"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 slotProps={{
                   input: {
                     startAdornment: (
@@ -145,7 +154,7 @@ const Transactions: React.FC = () => {
                 type="date"
                 variant="outlined"
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => handleDateChange('start', e.target.value)}
                 slotProps={{
                   inputLabel: {
                     shrink: true,
@@ -176,7 +185,7 @@ const Transactions: React.FC = () => {
                 type="date"
                 variant="outlined"
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={(e) => handleDateChange('end', e.target.value)}
                 slotProps={{
                   inputLabel: {
                     shrink: true,
@@ -207,65 +216,94 @@ const Transactions: React.FC = () => {
                 <TableCell>Date</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>Catégorie</TableCell>
+                <TableCell>Compte</TableCell>
                 <TableCell align="right">Montant</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredTransactions.map((transaction) => (
-                <TableRow
-                  key={transaction.id}
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: 'rgba(79, 70, 229, 0.05)',
-                    },
-                  }}
-                >
-                  <TableCell>
-                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                      {formatDate(transaction.date)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      {transaction.type === 'income' ? (
-                        <TrendingUp sx={{ color: theme.palette.success.main, fontSize: 20 }} />
-                      ) : (
-                        <TrendingDown sx={{ color: theme.palette.error.main, fontSize: 20 }} />
-                      )}
-                      <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                        {transaction.description}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={transaction.category}
-                      size="small"
-                      sx={{
-                        backgroundColor: `${getCategoryColor(transaction.category)}20`,
-                        color: getCategoryColor(transaction.category),
-                        borderRadius: '8px',
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        fontWeight: 600,
-                        color: transaction.type === 'income' 
-                          ? theme.palette.success.main 
-                          : theme.palette.error.main,
-                      }}
-                    >
-                      {transaction.amount > 0 ? '+' : ''}€{Math.abs(transaction.amount).toLocaleString()}
+              {transactions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} sx={{ textAlign: 'center', py: 4 }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                      Aucune transaction trouvée
                     </Typography>
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                transactions.map((transaction) => (
+                  <TableRow
+                    key={transaction.id}
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'rgba(79, 70, 229, 0.05)',
+                      },
+                    }}
+                  >
+                    <TableCell>
+                      <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                        {formatDate(transaction.date)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {transaction.category.type === 'INCOME' ? (
+                          <TrendingUp sx={{ color: theme.palette.success.main, fontSize: 20 }} />
+                        ) : (
+                          <TrendingDown sx={{ color: theme.palette.error.main, fontSize: 20 }} />
+                        )}
+                        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                          {transaction.description}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={transaction.category.name}
+                        size="small"
+                        sx={{
+                          backgroundColor: `${transaction.category.color}20`,
+                          color: transaction.category.color,
+                          borderRadius: '8px',
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                        {transaction.account.name}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          fontWeight: 600,
+                          color: transaction.category.type === 'INCOME' 
+                            ? theme.palette.success.main 
+                            : theme.palette.error.main,
+                        }}
+                      >
+                        {transaction.category.type === 'INCOME' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
+        
+        {totalPages > 1 && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handlePageChange}
+              color="primary"
+              showFirstButton
+              showLastButton
+            />
+          </Box>
+        )}
       </Card>
     </Box>
   );
