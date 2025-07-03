@@ -3,7 +3,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 interface User {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
 }
 
 interface AuthContextType {
@@ -40,7 +41,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const user = {
         id: '1',
         email: 'demo@fintrack.com',
-        name: 'Utilisateur Demo',
+        firstName: 'Jean-Demo',
+        lastName: 'Fintrack'
       };
       setUser(user);
       localStorage.setItem('fintrack_user', JSON.stringify(user));

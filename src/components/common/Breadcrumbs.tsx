@@ -28,24 +28,37 @@ const Breadcrumbs: React.FC = () => {
         },
       }}
     >
-      <Link
-        component={RouterLink}
-        to="/"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          color: theme.palette.text.secondary,
-          textDecoration: 'none',
-          fontSize: '0.875rem',
-          fontWeight: 500,
-          '&:hover': {
-            color: theme.palette.primary.main,
-          },
-        }}
-      >
-        <Home sx={{ mr: 0.5, fontSize: 16 }} />
-        Accueil
-      </Link>
+      {location.pathname === '/' ? (
+        <Typography
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            color: theme.palette.text.primary,
+            fontSize: '0.875rem',
+            fontWeight: 600,
+          }}
+        >
+          Accueil
+        </Typography>
+      ) : (
+        <Link
+          component={RouterLink}
+          to="/"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            color: theme.palette.text.secondary,
+            textDecoration: 'none',
+            fontSize: '0.875rem',
+            fontWeight: 500,
+            '&:hover': {
+              color: theme.palette.primary.main,
+            },
+          }}
+        >
+          Accueil
+        </Link>
+      )}
       
       {pathnames.map((value, index) => {
         const last = index === pathnames.length - 1;

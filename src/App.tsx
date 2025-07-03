@@ -12,6 +12,9 @@ import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Budgets from './pages/Budgets';
 import Analytics from './pages/Analytics';
+import Settings from './pages/Settings';
+import About from './pages/About';
+import Profile from './pages/Profile';
 
 const queryClient = new QueryClient();
 
@@ -34,6 +37,9 @@ function App() {
                         <Route path="/transactions" element={<Transactions />} />
                         <Route path="/budgets" element={<Budgets />} />
                         <Route path="/analytics" element={<Analytics />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/profile" element={<Profile />} />
                       </Routes>
                     </Layout>
                   </ProtectedRoute>

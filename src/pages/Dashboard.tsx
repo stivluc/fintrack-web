@@ -3,7 +3,7 @@ import { Grid, Box, Typography } from '@mui/material';
 import { AccountBalance, TrendingUp, CreditCard, Savings } from '@mui/icons-material';
 import StatsCard from '../components/common/StatsCard';
 import WealthChart from '../components/charts/WealthChart';
-import ExpenseChart from '../components/charts/ExpenseChart';
+import WealthCompositionChart from '../components/charts/WealthCompositionChart';
 
 const Dashboard: React.FC = () => {
 
@@ -16,12 +16,15 @@ const Dashboard: React.FC = () => {
     { month: 'Jun', wealth: 54500 },
   ];
 
-  const expenseData = [
-    { name: 'Alimentation', value: 1200, color: '#4F46E5' },
-    { name: 'Transport', value: 800, color: '#10B981' },
-    { name: 'Logement', value: 2000, color: '#F59E0B' },
-    { name: 'Loisirs', value: 600, color: '#EF4444' },
-    { name: 'Autres', value: 400, color: '#8B5CF6' },
+  const wealthCompositionData = [
+    { name: 'Immobilier', size: 180000, index: 0 },
+    { name: 'Actions', size: 45000, index: 1 },
+    { name: 'Assur...', size: 35000, index: 2 },
+    { name: 'Livret A', size: 22300, index: 3 },
+    { name: 'PEL', size: 18000, index: 4 },
+    { name: 'Compte courant', size: 8500, index: 5 },
+    { name: 'Crypto', size: 12000, index: 6 },
+    { name: 'Or/Métaux', size: 5000, index: 7 },
   ];
 
   return (
@@ -31,7 +34,7 @@ const Dashboard: React.FC = () => {
       </Typography>
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatsCard
             title="Patrimoine Total"
             value="€54,500"
@@ -40,7 +43,7 @@ const Dashboard: React.FC = () => {
             icon={<AccountBalance />}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatsCard
             title="Revenus ce mois"
             value="€4,200"
@@ -49,16 +52,16 @@ const Dashboard: React.FC = () => {
             icon={<TrendingUp />}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatsCard
             title="Dépenses ce mois"
             value="€3,200"
             change={-1.2}
-            changeType="negative"
+            changeType="positive"
             icon={<CreditCard />}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatsCard
             title="Épargne"
             value="€1,000"
@@ -70,11 +73,11 @@ const Dashboard: React.FC = () => {
       </Grid>
 
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, lg: 8 }}>
+        <Grid size={{ xs: 12, lg: 7 }}>
           <WealthChart data={wealthData} />
         </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <ExpenseChart data={expenseData} />
+        <Grid size={{ xs: 12, lg: 5 }}>
+          <WealthCompositionChart data={wealthCompositionData} />
         </Grid>
       </Grid>
     </Box>

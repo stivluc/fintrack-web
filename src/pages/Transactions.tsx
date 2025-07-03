@@ -11,12 +11,12 @@ import {
   TableHead,
   TableRow,
   Chip,
-  Button,
   TextField,
   InputAdornment,
   useTheme,
+  Grid,
 } from '@mui/material';
-import { Search, Add, TrendingUp, TrendingDown } from '@mui/icons-material';
+import { Search, TrendingUp, TrendingDown, DateRange } from '@mui/icons-material';
 
 interface Transaction {
   id: string;
@@ -30,6 +30,8 @@ interface Transaction {
 const Transactions: React.FC = () => {
   const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const transactions: Transaction[] = [
     {
@@ -74,11 +76,21 @@ const Transactions: React.FC = () => {
     },
   ];
 
-  const filteredTransactions = transactions.filter(
-    (transaction) =>
+  const filteredTransactions = transactions.filter((transaction) => {
+    const matchesSearch = 
       transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      transaction.category.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const transactionDate = new Date(transaction.date);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    
+    const matchesDateRange = 
+      (!start || transactionDate >= start) &&
+      (!end || transactionDate <= end);
+    
+    return matchesSearch && matchesDateRange;
+  });
 
   const getCategoryColor = (category: string) => {
     const colors: { [key: string]: string } = {
@@ -101,35 +113,89 @@ const Transactions: React.FC = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 600 }}>
-          Transactions
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          sx={{ borderRadius: '12px' }}
-        >
-          Nouvelle transaction
-        </Button>
-      </Box>
+      <Typography variant="h4" sx={{ mb: 4, fontWeight: 600 }}>
+        Transactions
+      </Typography>
 
       <Card sx={{ mb: 3 }}>
         <CardContent sx={{ p: 3 }}>
-          <TextField
-            fullWidth
-            placeholder="Rechercher une transaction..."
-            variant="outlined"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search sx={{ color: theme.palette.text.secondary }} />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <TextField
+                fullWidth
+                placeholder="Rechercher une transaction..."
+                variant="outlined"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search sx={{ color: theme.palette.text.secondary }} />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 6, md: 4 }}>
+              <TextField
+                fullWidth
+                label="Date de début"
+                type="date"
+                variant="outlined"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <DateRange sx={{ color: theme.palette.text.secondary }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: null,
+                  },
+                }}
+                sx={{
+                  '& input[type="date"]::-webkit-calendar-picker-indicator': {
+                    display: 'none',
+                  },
+                  '& input[type="date"]::-webkit-inner-spin-button': {
+                    display: 'none',
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 6, md: 4 }}>
+              <TextField
+                fullWidth
+                label="Date de fin"
+                type="date"
+                variant="outlined"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                  input: {
+                    endAdornment: null,
+                  },
+                }}
+                sx={{
+                  '& input[type="date"]::-webkit-calendar-picker-indicator': {
+                    display: 'none',
+                  },
+                  '& input[type="date"]::-webkit-inner-spin-button': {
+                    display: 'none',
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
 

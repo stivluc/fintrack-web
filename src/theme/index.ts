@@ -1,5 +1,16 @@
 import { createTheme } from '@mui/material/styles';
 
+// Extend the Theme interface
+declare module '@mui/material/styles' {
+  interface Theme {
+    chartColors: string[];
+  }
+
+  interface ThemeOptions {
+    chartColors?: string[];
+  }
+}
+
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -14,8 +25,8 @@ const theme = createTheme({
       dark: '#8B4513',
     },
     background: {
-      default: '#0D1117',
-      paper: '#161B22',
+      default: '#1a1a1a',
+      paper: '#242424',
     },
     text: {
       primary: '#F0F6FC',
@@ -35,6 +46,7 @@ const theme = createTheme({
       main: '#3FB950',
     },
   },
+  chartColors: ['#D4AF37', '#CD7F32', '#58A6FF', '#3FB950', '#D29922', '#F85149', '#8B5CF6', '#10B981'],
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
@@ -80,7 +92,7 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          background: 'rgba(22, 27, 34, 0.95)',
+          background: 'rgba(35, 35, 35, 0.95)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(212, 175, 55, 0.15)',
           borderRadius: '12px',
@@ -114,7 +126,7 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          background: 'rgba(22, 27, 34, 0.95)',
+          background: 'rgba(32, 32, 32, 0.95)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(212, 175, 55, 0.15)',
         },
@@ -123,7 +135,7 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          background: 'rgba(13, 17, 23, 0.95)',
+          background: 'rgba(25, 25, 25, 0.95)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(212, 175, 55, 0.2)',
           boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
@@ -133,7 +145,7 @@ const theme = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          background: 'rgba(13, 17, 23, 0.98)',
+          background: 'rgba(25, 25, 25, 0.98)',
           backdropFilter: 'blur(20px)',
           border: 'none',
           borderRight: '1px solid rgba(212, 175, 55, 0.2)',

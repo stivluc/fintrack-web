@@ -10,13 +10,13 @@ import {
   Alert,
 } from '@mui/material';
 import { Warning, CheckCircle, Error } from '@mui/icons-material';
+import ExpenseChart from '../components/charts/ExpenseChart';
 
 interface Budget {
   id: string;
   category: string;
   allocated: number;
   spent: number;
-  color: string;
 }
 
 const Budgets: React.FC = () => {
@@ -28,35 +28,30 @@ const Budgets: React.FC = () => {
       category: 'Alimentation',
       allocated: 1500,
       spent: 1200,
-      color: '#4F46E5',
     },
     {
       id: '2',
       category: 'Transport',
       allocated: 800,
       spent: 850,
-      color: '#10B981',
     },
     {
       id: '3',
       category: 'Logement',
       allocated: 2000,
       spent: 2000,
-      color: '#F59E0B',
     },
     {
       id: '4',
       category: 'Loisirs',
       allocated: 600,
       spent: 450,
-      color: '#EF4444',
     },
     {
       id: '5',
       category: 'Autres',
       allocated: 400,
       spent: 320,
-      color: '#8B5CF6',
     },
   ];
 
@@ -91,11 +86,20 @@ const Budgets: React.FC = () => {
   const totalSpent = budgets.reduce((sum, budget) => sum + budget.spent, 0);
   const overBudgetCount = budgets.filter(budget => budget.spent > budget.allocated).length;
 
+  const expenseData = [
+    { name: 'Alimentation', value: 1200, color: theme.chartColors[0] },
+    { name: 'Transport', value: 850, color: theme.chartColors[1] },
+    { name: 'Logement', value: 2000, color: theme.chartColors[2] },
+    { name: 'Loisirs', value: 450, color: theme.chartColors[3] },
+    { name: 'Autres', value: 320, color: theme.chartColors[4] },
+  ];
+
   return (
     <Box>
       <Typography variant="h4" sx={{ mb: 4, fontWeight: 600 }}>
         Budgets
       </Typography>
+      
 
       {overBudgetCount > 0 && (
         <Alert
@@ -113,7 +117,8 @@ const Budgets: React.FC = () => {
       )}
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, md: 4 }}>
+
+        <Grid size={{ xs: 12, sm: 4}}>
           <Card>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
@@ -125,7 +130,7 @@ const Budgets: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, sm: 4}}>
           <Card>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
@@ -137,7 +142,7 @@ const Budgets: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, sm: 4}}>
           <Card>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
@@ -159,58 +164,65 @@ const Budgets: React.FC = () => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={3}>
-        {budgets.map((budget) => {
-          const percentage = Math.min((budget.spent / budget.allocated) * 100, 100);
-          return (
-            <Grid size={{ xs: 12, md: 6 }} key={budget.id}>
-              <Card>
-                <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      {budget.category}
-                    </Typography>
-                    {getStatusIcon(budget.spent, budget.allocated)}
-                  </Box>
+                <Grid size={{ xs: 12 }} mb={4}>
+          <ExpenseChart data={expenseData} />
+        </Grid>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, lg: 8 }}>
+          <Grid container spacing={3}>
+            {budgets.map((budget) => {
+              const percentage = Math.min((budget.spent / budget.allocated) * 100, 100);
+              return (
+                <Grid size={{ xs: 12, sm: 6}} key={budget.id}>
+                  <Card>
+                    <CardContent sx={{ p: 3 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                          {budget.category}
+                        </Typography>
+                        {getStatusIcon(budget.spent, budget.allocated)}
+                      </Box>
 
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                      €{budget.spent.toLocaleString()} / €{budget.allocated.toLocaleString()}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                      {percentage.toFixed(1)}%
-                    </Typography>
-                  </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                          €{budget.spent.toLocaleString()} / €{budget.allocated.toLocaleString()}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                          {percentage.toFixed(1)}%
+                        </Typography>
+                      </Box>
 
-                  <LinearProgress
-                    variant="determinate"
-                    value={percentage}
-                    sx={{
-                      height: 8,
-                      borderRadius: 4,
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      mb: 2,
-                      '& .MuiLinearProgress-bar': {
-                        backgroundColor: getProgressColor(budget.spent, budget.allocated),
-                        borderRadius: 4,
-                      },
-                    }}
-                  />
+                      <LinearProgress
+                        variant="determinate"
+                        value={percentage}
+                        sx={{
+                          height: 8,
+                          borderRadius: 4,
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          mb: 2,
+                          '& .MuiLinearProgress-bar': {
+                            backgroundColor: getProgressColor(budget.spent, budget.allocated),
+                            borderRadius: 4,
+                          },
+                        }}
+                      />
 
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: getProgressColor(budget.spent, budget.allocated),
-                      fontWeight: 500,
-                    }}
-                  >
-                    {getStatusMessage(budget.spent, budget.allocated)}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: getProgressColor(budget.spent, budget.allocated),
+                          fontWeight: 500,
+                        }}
+                      >
+                        {getStatusMessage(budget.spent, budget.allocated)}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </Grid>
       </Grid>
     </Box>
   );

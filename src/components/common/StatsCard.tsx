@@ -60,7 +60,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
                 width: 40,
                 height: 40,
                 borderRadius: '12px',
-                background: 'rgba(79, 70, 229, 0.1)',
+                background: 'rgba(226, 226, 226, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

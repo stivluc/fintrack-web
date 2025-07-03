@@ -181,13 +181,26 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, variant = 'permanent' 
         </Typography>
         
         <ListItemButton 
+          selected={location.pathname === '/settings'}
           onClick={() => handleNavigation('/settings')}
           sx={{
             borderRadius: '8px',
-            py: 1.5,
+            py: 1,
             mb: 1,
+            transition: 'all 0.2s ease-in-out',
             '&:hover': {
               background: 'rgba(212, 175, 55, 0.05)',
+            },
+            '&.Mui-selected': {
+              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(205, 127, 50, 0.08) 100%)',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+              '& .MuiListItemIcon-root': {
+                color: theme.palette.primary.main,
+              },
+              '& .MuiListItemText-primary': {
+                color: theme.palette.primary.main,
+                fontWeight: 700,
+              },
             },
           }}
         >
@@ -198,19 +211,32 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, variant = 'permanent' 
             primary="Paramètres"
             primaryTypographyProps={{
               fontWeight: 600,
-              fontSize: '0.95rem',
+              fontSize: '0.85rem',
               letterSpacing: '-0.01em',
             }}
           />
         </ListItemButton>
 
         <ListItemButton 
+          selected={location.pathname === '/about'}
           onClick={() => handleNavigation('/about')}
           sx={{
             borderRadius: '8px',
-            py: 1.5,
+            py: 1,
+            transition: 'all 0.2s ease-in-out',
             '&:hover': {
               background: 'rgba(212, 175, 55, 0.05)',
+            },
+            '&.Mui-selected': {
+              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(205, 127, 50, 0.08) 100%)',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+              '& .MuiListItemIcon-root': {
+                color: theme.palette.primary.main,
+              },
+              '& .MuiListItemText-primary': {
+                color: theme.palette.primary.main,
+                fontWeight: 700,
+              },
             },
           }}
         >
@@ -221,7 +247,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, variant = 'permanent' 
             primary="À propos"
             primaryTypographyProps={{
               fontWeight: 600,
-              fontSize: '0.95rem',
+              fontSize: '0.85rem',
               letterSpacing: '-0.01em',
             }}
           />
@@ -253,7 +279,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, variant = 'permanent' 
               mr: 2,
             }}
           >
-            {user?.name?.charAt(0) || 'U'}
+            {user?.firstName?.charAt(0) || 'U'}
           </Avatar>
           <Box sx={{ flex: 1 }}>
             <Typography 
@@ -264,7 +290,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, variant = 'permanent' 
                 fontSize: '0.9rem',
               }}
             >
-              {user?.name}
+              {user?.firstName}
             </Typography>
             <Typography 
               variant="caption" 
@@ -283,6 +309,11 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, variant = 'permanent' 
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleUserMenuClose}
+          anchorOrigin={{vertical: "bottom", horizontal: "right"}}
+                transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
           PaperProps={{
             sx: {
               width: 200,
@@ -290,14 +321,14 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, variant = 'permanent' 
             },
           }}
         >
-          <MenuItem onClick={handleProfile} sx={{ py: 1.5 }}>
+          <MenuItem onClick={handleProfile} sx={{ py: 1.2, fontWeight: 600, fontSize: '0.85rem' }}>
             <ListItemIcon>
               <Person fontSize="small" />
             </ListItemIcon>
             Profil
           </MenuItem>
           <Divider />
-          <MenuItem onClick={handleLogout} sx={{ py: 1.5, color: theme.palette.error.main }}>
+          <MenuItem onClick={handleLogout} sx={{ py: 1.2, fontWeight: 600, color: theme.palette.error.main, fontSize: '0.85rem' }}>
             <ListItemIcon>
               <Logout fontSize="small" sx={{ color: theme.palette.error.main }} />
             </ListItemIcon>

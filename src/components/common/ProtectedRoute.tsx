@@ -18,7 +18,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
-          background: '#0A0E27',
+          background: '#242424',
         }}
       >
         <CircularProgress size={48} />
