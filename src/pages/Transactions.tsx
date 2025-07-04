@@ -18,6 +18,7 @@ import {
   Grid,
   Alert,
   Pagination,
+  Button,
 } from '@mui/material';
 import { Search, TrendingUp, TrendingDown, DateRange } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
@@ -94,12 +95,25 @@ const Transactions: React.FC = () => {
   };
 
   const handleDateChange = (field: 'start' | 'end', value: string) => {
+    // Valider le format de date avant de l'utiliser
+    if (value && !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      console.warn('⚠️ Invalid date format:', value);
+      return;
+    }
+    
     if (field === 'start') {
       setStartDate(value);
     } else {
       setEndDate(value);
     }
     setPage(1); // Reset to first page when filtering
+  };
+
+  const handleClearFilters = () => {
+    setStartDate('');
+    setEndDate('');
+    setSearchTerm('');
+    setPage(1);
   };
 
   const handleRequestSort = (property: string) => {
@@ -170,6 +184,10 @@ const Transactions: React.FC = () => {
                 variant="outlined"
                 value={startDate}
                 onChange={(e) => handleDateChange('start', e.target.value)}
+                inputProps={{
+                  min: '2020-01-01',
+                  max: '2030-12-31'
+                }}
                 slotProps={{
                   inputLabel: {
                     shrink: true,
@@ -201,6 +219,10 @@ const Transactions: React.FC = () => {
                 variant="outlined"
                 value={endDate}
                 onChange={(e) => handleDateChange('end', e.target.value)}
+                inputProps={{
+                  min: '2020-01-01',
+                  max: '2030-12-31'
+                }}
                 slotProps={{
                   inputLabel: {
                     shrink: true,
@@ -223,6 +245,15 @@ const Transactions: React.FC = () => {
                   },
                 }}
               />
+            </Grid>
+            <Grid size={{ xs: 12 }} sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button 
+                variant="outlined" 
+                onClick={handleClearFilters}
+                disabled={!startDate && !endDate && !searchTerm}
+              >
+                Effacer les filtres
+              </Button>
             </Grid>
           </Grid>
         </CardContent>
