@@ -98,7 +98,7 @@ const Dashboard: React.FC = () => {
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, lg: 7 }}>
-          <WealthChart data={wealth_evolution} />
+          <WealthChart />
         </Grid>
         <Grid size={{ xs: 12, lg: 5 }}>
           <WealthCompositionChart data={wealth_composition} />

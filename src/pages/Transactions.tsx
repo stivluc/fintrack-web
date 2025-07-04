@@ -10,6 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
   Chip,
   TextField,
   InputAdornment,
@@ -29,6 +30,8 @@ const Transactions: React.FC = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [page, setPage] = useState(1);
+  const [orderBy, setOrderBy] = useState<string>('date');
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   
   const pageSize = 20;
 
@@ -37,6 +40,7 @@ const Transactions: React.FC = () => {
     const params: any = {
       page,
       limit: pageSize,
+      ordering: order === 'desc' ? `-${orderBy}` : orderBy,
     };
     
     if (searchTerm) {
@@ -52,7 +56,7 @@ const Transactions: React.FC = () => {
     }
     
     return params;
-  }, [searchTerm, startDate, endDate, page]);
+  }, [searchTerm, startDate, endDate, page, orderBy, order]);
 
   const { data: transactionsData, isLoading, error } = useQuery({
     queryKey: ['transactions', queryParams],
@@ -96,6 +100,17 @@ const Transactions: React.FC = () => {
       setEndDate(value);
     }
     setPage(1); // Reset to first page when filtering
+  };
+
+  const handleRequestSort = (property: string) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+    setPage(1); // Reset to first page when sorting
+  };
+
+  const createSortHandler = (property: string) => () => {
+    handleRequestSort(property);
   };
 
   if (isLoading) {
@@ -191,6 +206,11 @@ const Transactions: React.FC = () => {
                     shrink: true,
                   },
                   input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <DateRange sx={{ color: theme.palette.text.secondary }} />
+                      </InputAdornment>
+                    ),
                     endAdornment: null,
                   },
                 }}
@@ -213,11 +233,96 @@ const Transactions: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>Catégorie</TableCell>
-                <TableCell>Compte</TableCell>
-                <TableCell align="right">Montant</TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'date'}
+                    direction={orderBy === 'date' ? order : 'asc'}
+                    onClick={createSortHandler('date')}
+                    sx={{
+                      fontWeight: 600,
+                      '&.Mui-active': {
+                        color: theme.palette.primary.main,
+                      },
+                      '&:hover': {
+                        color: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                    Date
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'description'}
+                    direction={orderBy === 'description' ? order : 'asc'}
+                    onClick={createSortHandler('description')}
+                    sx={{
+                      fontWeight: 600,
+                      '&.Mui-active': {
+                        color: theme.palette.primary.main,
+                      },
+                      '&:hover': {
+                        color: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                    Description
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'category__name'}
+                    direction={orderBy === 'category__name' ? order : 'asc'}
+                    onClick={createSortHandler('category__name')}
+                    sx={{
+                      fontWeight: 600,
+                      '&.Mui-active': {
+                        color: theme.palette.primary.main,
+                      },
+                      '&:hover': {
+                        color: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                    Catégorie
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'account__name'}
+                    direction={orderBy === 'account__name' ? order : 'asc'}
+                    onClick={createSortHandler('account__name')}
+                    sx={{
+                      fontWeight: 600,
+                      '&.Mui-active': {
+                        color: theme.palette.primary.main,
+                      },
+                      '&:hover': {
+                        color: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                    Compte
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell align="right">
+                  <TableSortLabel
+                    active={orderBy === 'amount'}
+                    direction={orderBy === 'amount' ? order : 'asc'}
+                    onClick={createSortHandler('amount')}
+                    sx={{
+                      fontWeight: 600,
+                      '&.Mui-active': {
+                        color: theme.palette.primary.main,
+                      },
+                      '&:hover': {
+                        color: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                    Montant
+                  </TableSortLabel>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

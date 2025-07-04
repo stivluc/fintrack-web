@@ -25,7 +25,7 @@ const WealthCompositionChart: React.FC<WealthCompositionChartProps> = ({ data })
       return (
         <Box
           sx={{
-            background: 'rgba(26, 31, 58, 0.95)',
+            background: 'rgba(55, 55, 55, 0.95)',
             backdropFilter: 'blur(20px)',
             border: '1px solid rgba(255, 255, 255, 0.1)',
             borderRadius: '12px',

@@ -304,8 +304,9 @@ class ApiService {
   }
 
   // Dashboard
-  async getDashboardStats(): Promise<DashboardStats> {
-    const response = await this.api.get<DashboardStats>('/transactions/dashboard_stats/');
+  async getDashboardStats(period?: string): Promise<DashboardStats> {
+    const params = period ? { period } : {};
+    const response = await this.api.get<DashboardStats>('/transactions/dashboard_stats/', { params });
     return response.data;
   }
 

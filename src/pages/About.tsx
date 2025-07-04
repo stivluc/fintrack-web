@@ -69,10 +69,10 @@ const About: React.FC = () => {
               </Typography>
               
               <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
-                L'interface web utilise actuellement des données fictives pour la démonstration. 
-                L'API Django et la base de données PostgreSQL sont en cours de développement et 
-                seront bientôt connectées pour remplacer ces données de test par de vraies données 
-                persistantes.
+                L'interface web utilise désormais des données générées par l'API Django avec 
+                PostgreSQL comme base de données. Le système génère automatiquement des données 
+                de démonstration réalistes incluant des transactions, comptes bancaires, budgets 
+                et suivi patrimonial pour illustrer les fonctionnalités de l'application.
               </Typography>
             </CardContent>
           </Card>
