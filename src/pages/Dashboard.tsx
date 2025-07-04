@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Grid, Box, Typography, Alert } from '@mui/material';
 import { AccountBalance, TrendingUp, TrendingDown, Savings } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
     return null;
   }
 
-  const { current_month, wealth_evolution, wealth_composition } = dashboardData;
+  const { current_month, wealth_composition } = dashboardData;
 
   return (
     <Box>

@@ -22,7 +22,7 @@ import {
 import { Search, TrendingUp, TrendingDown, DateRange } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
 import { TransactionsSkeleton } from '../components/common/LoadingSkeletons';
-import apiService, { Transaction } from '../services/api';
+import apiService, { Transaction } from '../services/api'; // eslint-disable-line no-unused-vars
 
 const Transactions: React.FC = () => {
   const theme = useTheme();

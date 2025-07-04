@@ -259,7 +259,7 @@ export const LoadingSpinner: React.FC<{ size?: number }> = ({ size = 40 }) => (
   </Box>
 );
 
-export default {
+const LoadingSkeletons = {
   StatsCardSkeleton,
   ChartSkeleton,
   TransactionTableSkeleton,
@@ -272,3 +272,5 @@ export default {
   ProfileSkeleton,
   LoadingSpinner,
 };
+
+export default LoadingSkeletons;

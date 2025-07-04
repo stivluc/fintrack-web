@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 // Configuration de l'API
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://fintrack-api-czav.onrender.com/api';

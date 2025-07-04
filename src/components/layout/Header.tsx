@@ -22,7 +22,6 @@ import {
   Notifications,
   TrendingUp,
   Warning,
-  CheckCircle,
   Info,
 } from '@mui/icons-material';
 import Breadcrumbs from '../common/Breadcrumbs';
