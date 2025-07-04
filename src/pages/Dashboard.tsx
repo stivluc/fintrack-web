@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
           <StatsCard
             title="Dépenses (30 derniers jours)"
             value={formatCurrency(current_month.expenses)}
-            change={formatChange(Math.abs(current_month.expenses_change))}
+            change={formatChange(current_month.expenses_change)}
             changeType={current_month.expenses_change <= 0 ? "positive" : "negative"}
             icon={current_month.expenses_change <= 0 ? <TrendingDown /> : <TrendingUp />}
           />
