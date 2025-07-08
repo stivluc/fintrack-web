@@ -154,7 +154,7 @@ const Budgets: React.FC = () => {
       )}
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, lg: 8 }}>
+        <Grid size={{ xs: 12 }}>
           <Grid container spacing={3}>
             {budgets.map((budget) => (
               <Grid size={{ xs: 12, sm: 6}} key={budget.id}>
